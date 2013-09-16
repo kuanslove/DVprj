@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+		<title>Add color transitions</title>
+		<script type="text/javascript" src="d3.v2.js"></script>
+		<style type="text/css">
+
+			.bar {
+				/* fill: steelblue; */ /* Moved control of 'fill' to JS code below */
+				stroke: none;
+			}
+			
+			.highlight {
+				fill: red;
+			}
+
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript">
+			
+					setInterval(chgcolor,3000);
+		var id=0;
+		function gen_data(d, i){
+				return { 
+					index: i,
+					value:d					
+					};
+			};
+		var data=d3.range(50).map(gen_data);
+		
+		var scale = d3.scale.linear().domain([0,d3.max(data,function(d){ return d.value; })]).range([10,100]);
+		
+		var svg=d3.select('body').append('svg');
+		
+		var H=d3.max(data,function(d){ return d.value; });
+		var W = 0.95*window.innerWidth;
+		
+		
+		svg.selectAll('rect').data(data).enter().append('rect')
+			.attr('width',function(){return 0.9*(W)/data.length;})
+			.attr('height',function(d){return scale(d.value);})
+			.attr('x',function(d){return W/data.length*d.index;})
+			.attr('y',function(d){return scale(H-d.value);})
+			.on("mouseover", function(d) {
+					d3.select(this).classed("highlight", true);
+				})
+				.on("mouseout", function(d) {
+					d3.select(this).classed("highlight", false);
+				});
+			
+			
+			
+	function chgcolor(){
+		d3.selectAll('rect').transition().duration(3000)
+				.attr("fill", function() {
+				
+						var r = Math.round(Math.random() * 250);					//Choose random red, green, blue values
+						var g = Math.round(Math.random() * 250);
+						var b = Math.round(Math.random() * 250);
+					
+						return "rgb(" + r + "," + g + "," + b + ")";	//Set fill to rgb value
+					});
+				};
+				
+		
+
+		</script>
+		
+	</body>
+		
